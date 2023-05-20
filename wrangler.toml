@@ -1,0 +1,9 @@
+name = "greenwood-and-cloudflare"
+main = "./functions/hello.js"
+compatibility_date = "2022-05-03"
+
+[build]
+command = "npm run build"
+
+[site]
+bucket = "./public"
