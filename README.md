@@ -1,6 +1,6 @@
 # greenwood-demo-adapter-cloudflare
 
-A demonstration repo for using Greenwood with Cloudflare Pages and Edge functions.
+A demonstration repo for using Greenwood with Cloudflare Pages and Edge functions (Workers).
 
 > ⚠️ _**Note**: Currently this repo is a WIP_
 
