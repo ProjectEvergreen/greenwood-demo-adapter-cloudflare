@@ -4,6 +4,7 @@ pages_build_output_dir = "./public"
 compatibility_date = "2023-10-12"
 # main = "./functions/hello.js"
 
+# TODO - seems like this can only be done through the UI
 # https://developers.cloudflare.com/workers/wrangler/custom-builds
 # [build]
 # command = "npm run build"
