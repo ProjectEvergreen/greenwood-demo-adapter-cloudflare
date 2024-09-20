@@ -1,10 +1,8 @@
 # greenwood-demo-adapter-cloudflare
 
-A demonstration repo for using Greenwood with Cloudflare Pages and Workers.
+A demonstration repo for using Greenwood with Cloudflare Pages and Workers (functions) for APIs and SSR pages and used in part of crafting the design for [introducing platform "adapters" into Greenwood](https://github.com/ProjectEvergreen/greenwood/issues/1008).  It also takes reference from [this repo / presentation](https://github.com/thescientist13/web-components-at-the-edge/) for some earlier prototypes for server rendering Web Components.
 
 > ⚠️ _**Note**: Currently this repo is a WIP_
-
-A demonstration repo for using Greenwood with Cloudflare Pages and Workers (functions) for APIs and SSR pages and used in part of crafting the design for [introducing platform "adapters" into Greenwood](https://github.com/ProjectEvergreen/greenwood/issues/1008).  It also takes reference from [this repo / presentation](https://github.com/thescientist13/web-components-at-the-edge/) for some earlier prototypes for server rendering Web Components.
 
 ## Setup
 
