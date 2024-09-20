@@ -1,9 +1,9 @@
+# https://developers.cloudflare.com/pages/functions/wrangler-configuration/
 name = "greenwood-demo-platform-cloudflare"
-main = "./functions/hello.js"
-compatibility_date = "2022-05-03"
+pages_build_output_dir = "./public"
+compatibility_date = "2023-10-12"
+# main = "./functions/hello.js"
 
+# https://developers.cloudflare.com/workers/wrangler/custom-builds
 [build]
 command = "npm run build"
-
-[site]
-bucket = "./public"
