@@ -24,8 +24,8 @@ This repo aims to demonstrate a couple of Greenwood's features ([API Routes](htt
 
 |Feature    |Greenwood |Workers|
 |---------- |----------|-------|
-|API Routes |   ✅     |  ❓   |
-|SSR Pages  |   ✅     |  ❓   |
+|API Routes |   ✅     |   ⚠️   |
+|SSR Pages  |   ✅     |   ⚠️   |
 
 You can see the live demo at [https://greenwood-demo-adapter-cloudflare.pages.dev/](https://greenwood-demo-adapter-cloudflare.pages.dev/).
 
@@ -35,9 +35,9 @@ The demos include the following examples:
 
 ### API Routes
 
-- ✅  [`/api/greeting?name{xxx}`](https://greenwood-demo-adapter-vercel.vercel.app/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
-- ✅ [`/api/fragment`](https://greenwood-demo-adapter-vercel.vercel.app/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
+- ⚠️ [`/api/greeting?name{xxx}`](https://greenwood-demo-adapter-cloudflare.pages.dev/api/greeting) - An API that returns a JSON response and optionally uses the `name` query param for customization.  Otherwise returns a default message.
+- ⚠️ [`/api/fragment`](https://greenwood-demo-adapter-cloudflare.pages.dev/api/fragment) - An API for returning fragments of server rendered Web Components as HTML, that are then appended to the DOM.  The same card component used in SSR also runs on the client to provide interactivity, like event handling.
 
 ### SSR Pages
 
-- ✅ [`/products/`](https://greenwood-demo-adapter-vercel.vercel.app/products/) - SSR page for rendering Greenwood pages.
+- ⚠️ [`/products/`](https://greenwood-demo-adapter-cloudflare.pages.dev/products/) - SSR page for rendering Greenwood pages.
