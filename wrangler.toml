@@ -1,4 +1,4 @@
-name = "greenwood-and-cloudflare"
+name = "greenwood-demo-platform-cloudflare"
 main = "./functions/hello.js"
 compatibility_date = "2022-05-03"
 
