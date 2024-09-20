@@ -5,5 +5,5 @@ compatibility_date = "2023-10-12"
 # main = "./functions/hello.js"
 
 # https://developers.cloudflare.com/workers/wrangler/custom-builds
-# [build]
-# command = "npm run build"
+[build]
+command = "npm run build"
