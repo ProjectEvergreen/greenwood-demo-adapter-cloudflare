@@ -1,0 +1,48 @@
+diff --git a/node_modules/@greenwood/cli/src/config/rollup.config.js b/node_modules/@greenwood/cli/src/config/rollup.config.js
+index b0bad6b..b898730 100644
+--- a/node_modules/@greenwood/cli/src/config/rollup.config.js
++++ b/node_modules/@greenwood/cli/src/config/rollup.config.js
+@@ -647,6 +647,11 @@ const getRollupConfigForBrowserScripts = async (compilation) => {
+ 
+ const getRollupConfigForApiRoutes = async (compilation) => {
+   const { outputDir } = compilation.context;
++  const customRollupPlugins = compilation.config.plugins.filter(plugin => {
++    return plugin.type === 'rollup' && plugin.name !== 'plugin-standard-javascript:rollup';
++  }).map(plugin => {
++    return plugin.provider(compilation);
++  }).flat();
+ 
+   return [...compilation.manifest.apis.values()]
+     .map((api) => {
+@@ -673,7 +678,8 @@ const getRollupConfigForApiRoutes = async (compilation) => {
+           }),
+           commonjs(),
+           greenwoodImportMetaUrl(compilation),
+-          greenwoodSyncApiRoutesOutputPath(compilation)
++          greenwoodSyncApiRoutesOutputPath(compilation),
++          ...customRollupPlugins
+         ],
+         onwarn: (errorObj) => {
+           const { code, message } = errorObj;
+@@ -701,6 +707,11 @@ const getRollupConfigForApiRoutes = async (compilation) => {
+ 
+ const getRollupConfigForSsrPages = async (compilation, inputs) => {
+   const { outputDir } = compilation.context;
++  const customRollupPlugins = compilation.config.plugins.filter(plugin => {
++    return plugin.type === 'rollup' && plugin.name !== 'plugin-standard-javascript:rollup';
++  }).map(plugin => {
++    return plugin.provider(compilation);
++  }).flat();
+ 
+   return inputs.map(({ id, inputPath }) => {
+     return {
+@@ -721,7 +732,8 @@ const getRollupConfigForSsrPages = async (compilation, inputs) => {
+         }),
+         commonjs(),
+         greenwoodImportMetaUrl(compilation),
+-        greenwoodSyncSsrEntryPointsOutputPaths(compilation)
++        greenwoodSyncSsrEntryPointsOutputPaths(compilation),
++        ...customRollupPlugins
+       ],
+       onwarn: (errorObj) => {
+         const { code, message } = errorObj;
