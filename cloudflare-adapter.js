@@ -41,13 +41,8 @@ function generateOutputFormat(id, type) {
         headers: new Headers(headers),
         method
       });
-      const res = await ${handlerAlias}(req);
-
-      res.headers.forEach((value, key) => {
-        response.setHeader(key, value);
-      });
-      response.status(res.status);
-      response.send(await res.text());
+      
+      return await ${handlerAlias}(req);
     }
   `;
 }
