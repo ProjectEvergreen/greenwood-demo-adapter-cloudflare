@@ -2,12 +2,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { checkResourceExists } from '@greenwood/cli/src/lib/resource-utils.js';
 
-// export function onRequest(context) {
-//   console.log('hello world???')
-//   return new Response(context.params.user)
-// }
-
-// https://vercel.com/docs/functions/serverless-functions/runtimes/node-js#node.js-helpers
 function generateOutputFormat(id, type) {
   const handlerAlias = '$handler';
   const path = type === 'page'
@@ -65,6 +59,7 @@ async function setupFunctionBuildFolder(id, outputType, outputRoot) {
   await fs.writeFile(new URL('./index.js', outputRoot), outputFormat);
 }
 
+// https://developers.cloudflare.com/pages/functions/routing/
 async function cloudflareAdapter(compilation) {
   const { outputDir, projectDirectory } = compilation.context;
   const { basePath } = compilation.config;
