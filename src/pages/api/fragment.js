@@ -2,6 +2,7 @@ import { renderFromHTML } from 'wc-compiler';
 import { getProducts } from '../../services/products.js';
 
 export async function handler(request) {
+  console.log('FRAGMENT API', { request });
   const params = new URLSearchParams(request.url.slice(request.url.indexOf('?')));
   const limit = params.has('limit') ? parseInt(params.get('limit'), 10) : 5;
   const offset = params.has('offset') ? parseInt(params.get('offset'), 10) : 0;
