@@ -4,8 +4,6 @@ A demonstration repo for deploying a full-stack [**Greenwood**](https://www.gree
 
 > ⚠️ _**Note**: This repo is currently a [work in progress](https://github.com/ProjectEvergreen/greenwood/issues/1143)_
 
-> ⚠️ _**Note**: Currently this repo is a WIP_
-
 ## Setup
 
 To run locally
@@ -22,8 +20,8 @@ This repo aims to demonstrate a couple of Greenwood's features ([API Routes](htt
 
 ## Status
 
-|Feature    |Greenwood |Workers|
-|---------- |----------|-------|
+|Feature    |Greenwood |Workers |
+|---------- |----------|--------|
 |API Routes |   ✅     |   ⚠️   |
 |SSR Pages  |   ✅     |   ⚠️   |
 
