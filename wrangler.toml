@@ -17,3 +17,6 @@ fallthrough = true
 [assets]
 directory = "./public"
 binding = "ASSETS"
+
+# Required by wrangler preview for deploy previews
+[previews]
