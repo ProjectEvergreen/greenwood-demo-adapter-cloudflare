@@ -6,6 +6,9 @@ main = "./functions/worker.js"
 compatibility_flags = ["new_module_registry"]
 compatibility_date = "2026-10-03"
 no_bundle = true
+# Enable workers.dev preview URLs; apply this Worker routing setting with wrangler deploy.
+# https://developers.cloudflare.com/workers/previews/custom-domains/#enable-workersdev-preview-urls
+preview_urls = true
 
 # https://developers.cloudflare.com/workers/wrangler/configuration/#bundling
 [[rules]]
