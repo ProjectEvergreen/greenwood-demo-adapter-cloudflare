@@ -1,18 +1,19 @@
 import { renderFromHTML } from 'wc-compiler';
-import { getProducts } from '../../services/products.js';
+import { getProducts } from '../../services/products.ts';
 
-export async function handler(request) {
-  const params = new URLSearchParams(request.url.slice(request.url.indexOf('?')));
-  const limit = params.has('limit') ? parseInt(params.get('limit'), 10) : 5;
-  const offset = params.has('offset') ? parseInt(params.get('offset'), 10) : 0;
+export async function handler(request: Request): Promise<Response> {
+  const params = new URL(request.url).searchParams;
+  const limit = parseInt(params.get('limit') ?? '5', 10);
+  const offset = parseInt(params.get('offset') ?? '0', 10);
   const products = (await getProducts()).slice(offset, offset + limit);
   const { html } = await renderFromHTML(`
     ${
       products.map((item, idx) => {
-        const { title, thumbnail } = item;
+        const { title, thumbnail, id } = item;
 
         return `
           <app-card
+            id="${id}"
             title="${offset + idx + 1}) ${title}"
             thumbnail="${thumbnail}"
           ></app-card>
@@ -20,7 +21,7 @@ export async function handler(request) {
       }).join('')
     }
   `, [
-    new URL('../../components/card.js', import.meta.url)
+    new URL('../../components/card.ts', import.meta.url)
   ]);
 
   return new Response(html, {

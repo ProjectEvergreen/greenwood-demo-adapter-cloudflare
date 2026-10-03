@@ -1,14 +1,15 @@
-import '../components/card.js';
-import { getProducts } from '../services/products.js';
+import '../components/card.ts';
+import { getProducts } from '../services/products.ts';
 
 export default class ProductsPage extends HTMLElement {
-  async connectedCallback() {
+  async connectedCallback(): Promise<void> {
     const products = await getProducts();
     const html = products.map((product) => {
-      const { title, thumbnail } = product;
+      const { title, thumbnail, id } = product;
 
       return `
         <app-card
+          id="${id}"
           title="${title}"
           thumbnail="${thumbnail}"
         >

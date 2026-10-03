@@ -1,7 +1,9 @@
+import type { ModalDetail } from './modal.ts';
+
 export default class Card extends HTMLElement {
 
-  selectItem() {
-    const itemSelectedEvent = new CustomEvent("update-modal", {
+  selectItem(): void {
+    const itemSelectedEvent = new CustomEvent<ModalDetail>("update-modal", {
       detail: {
         content: `You selected the "${this.title}"`,
       },
@@ -10,11 +12,15 @@ export default class Card extends HTMLElement {
     window.dispatchEvent(itemSelectedEvent);
   }
 
-  connectedCallback() {
+  connectedCallback(): void {
     if (!this.shadowRoot) {
       const thumbnail = this.getAttribute('thumbnail');
       const title = this.getAttribute('title');
+      const id = this.getAttribute('id');
       const template = document.createElement('template');
+      const link = id
+        ? `<a href="/product/${id}/">View Item Details</a>`
+        : '';
 
       template.innerHTML = `
         <style>
@@ -27,7 +33,7 @@ export default class Card extends HTMLElement {
             width: fit-content;
             border-radius: 10px;
             padding: 2rem 1rem;
-            height: 680px;
+            height: 700px;
             justify-content: space-between;
             background-color: #fff;
             overflow-x: hidden;
@@ -63,12 +69,16 @@ export default class Card extends HTMLElement {
         <div>
           <h3>${title}</h3>
           <img src="${thumbnail}" alt="${title}" loading="lazy" width="100%">
-          <button onclick="this.getRootNode().host.selectItem()">View Item Details</button>
+          ${link}
+          <button>Preview Item Details</button>
         </div>
       `;
-      this.attachShadow({ mode: 'open' });
-      this.shadowRoot.appendChild(template.content.cloneNode(true));
+      const shadowRoot = this.attachShadow({ mode: 'open' });
+      shadowRoot.appendChild(template.content.cloneNode(true));
     }
+
+    const button = this.shadowRoot?.querySelector('button');
+    button?.addEventListener('click', () => this.selectItem());
   }
 }
 
