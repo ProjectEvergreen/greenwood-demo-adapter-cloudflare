@@ -26,8 +26,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
     const html = await fetch(`/api/fragment?offset=${offset}&limit=${limit}`)
       .then(response => response.text());
-    const fragment = Document.parseHTMLUnsafe(html);
 
-    productsOutput?.insertAdjacentHTML('beforeend', fragment.body.innerHTML);
+    // Preserve Lit's comment markers and shadow roots when inserting the fragment.
+    const fragment = document.createElement('div');
+
+    fragment.setHTMLUnsafe(html);
+    productsOutput?.append(...fragment.childNodes);
   });
 });

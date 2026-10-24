@@ -1,7 +1,7 @@
 {
   "name": "greenwood-demo-adapter-cloudflare",
   "version": "1.0.0",
-  "description": "A demonstration repo for deploying a full-stack Greenwood app with Cloudflare static hosting and functions",
+  "description": "A demonstration repo for a full-stack Greenwood app with Lit SSR and a Cloudflare adapter",
   "homepage": "https://github.com/ProjectEvergreen/greenwood-demo-adapter-cloudflare#readme",
   "author": "Owen Buckley <owen@thegreenhouse.io>",
   "license": "ISC",
@@ -13,7 +13,7 @@
   "keywords": [
     "Greenwood",
     "Cloudflare",
-    "WCC",
+    "Lit",
     "Web Components",
     "Serverless",
     "Edge",
@@ -24,10 +24,16 @@
     "build": "NODE_OPTIONS='--import @greenwood/cli/register' greenwood build",
     "serve": "greenwood serve",
     "start": "npm run serve",
-    "check": "tsc"
+    "check": "tsc",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "lit": "^3.3.3"
   },
   "devDependencies": {
     "@greenwood/cli": "~0.35.0-alpha.2",
+    "@greenwood/plugin-renderer-lit": "0.35.0-alpha.2",
+    "patch-package": "^8.0.1",
     "typescript": "^6.0.3",
     "wrangler": "^4.147.0"
   }
