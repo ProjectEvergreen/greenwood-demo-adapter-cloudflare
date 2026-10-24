@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable", "ESNext.Disposable"],
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+  },
+
+  "exclude": [
+    "./public/",
+    "./greenwood/",
+    "functions",
+    "node_modules"
+  ],
+}

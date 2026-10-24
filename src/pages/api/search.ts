@@ -1,10 +1,12 @@
 import { renderFromHTML } from 'wc-compiler';
-import { getProducts } from '../../services/products.js';
-
-export async function handler(request) {
+import { getProducts } from '../../services/products.ts';
+import type { Product } from '../../services/products.ts';
+  
+export async function handler(request: Request): Promise<Response> {
   const formData = await request.formData();
-  const term = formData.has('term') ? formData.get('term') : '';
-  const products = (await getProducts())
+  const termValue = formData.get('term');
+  const term = typeof termValue === 'string' ? termValue : '';
+  const products = (await getProducts() as Product[])
     .filter((product => {
       return term !== '' && product.title.toLowerCase().includes(term.toLowerCase());
     }));
@@ -16,10 +18,11 @@ export async function handler(request) {
     const { html } = await renderFromHTML(`
       ${
         products.map((item, idx) => {
-          const { title, thumbnail } = item;
+          const { title, thumbnail, id } = item;
 
           return `
             <app-card
+              id="${id}"
               title="${idx + 1}) ${title}"
               thumbnail="${thumbnail}"
             ></app-card>
@@ -27,7 +30,7 @@ export async function handler(request) {
         }).join('')
       }
     `, [
-      new URL('../../components/card.js', import.meta.url)
+      new URL('../../components/card.ts', import.meta.url)
     ]);
 
     body = html;
