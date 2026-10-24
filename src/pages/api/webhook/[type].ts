@@ -1,5 +1,5 @@
 type WebhookContext = {
-  params?: { type: string };
+  params?: { type: 'event' };
 };
 
 type WebhookEvent = {

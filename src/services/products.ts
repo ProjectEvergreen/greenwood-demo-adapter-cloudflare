@@ -4,9 +4,7 @@ export interface Product {
   thumbnail: string;
 }
 
-function getProducts(): Promise<Product[]>;
-function getProducts(id: string): Promise<Product>;
-async function getProducts(id?: string): Promise<Product | Product[]> {
+export async function getProducts(id?: string): Promise<Product | Product[]> {
   const idSuffix = id ? `/${id}` : '';
   const data = (await fetch(`https://dummyjson.com/products${idSuffix}`)
     .then(resp => resp.json()));
@@ -17,5 +15,3 @@ async function getProducts(id?: string): Promise<Product | Product[]> {
 
   return data.products as Product[];
 }
-
-export { getProducts };

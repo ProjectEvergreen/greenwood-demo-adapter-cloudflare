@@ -1,11 +1,12 @@
 import { renderFromHTML } from 'wc-compiler';
 import { getProducts } from '../../services/products.ts';
-
+import type { Product } from '../../services/products.ts';
+  
 export async function handler(request: Request): Promise<Response> {
   const formData = await request.formData();
   const termValue = formData.get('term');
   const term = typeof termValue === 'string' ? termValue : '';
-  const products = (await getProducts())
+  const products = (await getProducts() as Product[])
     .filter((product => {
       return term !== '' && product.title.toLowerCase().includes(term.toLowerCase());
     }));

@@ -1,11 +1,12 @@
 import { renderFromHTML } from 'wc-compiler';
 import { getProducts } from '../../services/products.ts';
+import type { Product } from '../../services/products.ts';
 
 export async function handler(request: Request): Promise<Response> {
   const params = new URL(request.url).searchParams;
   const limit = parseInt(params.get('limit') ?? '5', 10);
   const offset = parseInt(params.get('offset') ?? '0', 10);
-  const products = (await getProducts()).slice(offset, offset + limit);
+  const products = (await getProducts() as Product[]).slice(offset, offset + limit);
   const { html } = await renderFromHTML(`
     ${
       products.map((item, idx) => {

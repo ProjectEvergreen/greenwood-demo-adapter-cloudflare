@@ -1,9 +1,10 @@
 import '../components/card.ts';
 import { getProducts } from '../services/products.ts';
+import type { Product } from '../services/products.ts';
 
 export default class ProductsPage extends HTMLElement {
   async connectedCallback(): Promise<void> {
-    const products = await getProducts();
+    const products = await getProducts() as Product[];
     const html = products.map((product) => {
       const { title, thumbnail, id } = product;
 

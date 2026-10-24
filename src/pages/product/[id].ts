@@ -1,5 +1,6 @@
 import '../../components/card.ts';
 import { getProducts } from '../../services/products.ts';
+import type { Product } from '../../services/products.ts';
 
 export default class ProductDetailsPage extends HTMLElement {
   #id: string;
@@ -10,7 +11,7 @@ export default class ProductDetailsPage extends HTMLElement {
   }
 
   async connectedCallback(): Promise<void> {
-    const product = await getProducts(this.#id);
+    const product = await getProducts(this.#id) as Product;
     const { title, thumbnail } = product;
 
     this.innerHTML = `
