@@ -20,6 +20,14 @@ function generateWorker(routes, basePath) {
   const isolationSupport = hasIsolation
     ? `import { WorkerEntrypoint } from 'cloudflare:workers';
 
+// Give isolated routes a serializable RPC binding instead of the native asset binding.
+// https://developers.cloudflare.com/dynamic-workers/usage/bindings/
+export class GreenwoodAssets extends WorkerEntrypoint {
+  fetch(request) {
+    return this.env.ASSETS.fetch(request);
+  }
+}
+
 // Forward child Worker logs and exceptions to the parent Worker's observability.
 export class GreenwoodRouteLogs extends WorkerEntrypoint {
   tail(events) {
@@ -36,22 +44,41 @@ export class GreenwoodRouteLogs extends WorkerEntrypoint {
 }
 
 async function invokeIsolatedRoute(route, request, params, env, ctx) {
-  const { ${ISOLATION_BINDING}: loader, ...bindings } = env;
+  const { ${ISOLATION_BINDING}: loader, ASSETS, ...bindings } = env;
 
   if (!loader) {
     throw new Error('Route isolation requires a Worker Loader binding named ${ISOLATION_BINDING}');
   }
 
-  // Import code as strings, without evaluating route modules in the parent isolate.
-  const { default: code } = await route.load();
-  const worker = loader.load({
-    ...code,
-    env: bindings,
-    tails: [ctx.exports.GreenwoodRouteLogs({ props: { route: new URL(request.url).pathname } })],
-  });
+  const pathname = new URL(request.url).pathname;
+  let stage = 'import route code';
 
-  // load() creates a fresh Worker for each request; native RPC preserves body streams.
-  return worker.getEntrypoint().handle(request, params);
+  try {
+    // Import code as strings, without evaluating route modules in the parent isolate.
+    const { default: code } = await route.load();
+    stage = 'prepare bindings';
+    const assets = ASSETS ? { ASSETS: ctx.exports.GreenwoodAssets({}) } : {};
+    const tails = [ctx.exports.GreenwoodRouteLogs({ props: { route: pathname } })];
+
+    stage = 'create worker';
+    const worker = loader.load({ ...code, env: { ...bindings, ...assets }, tails });
+    stage = 'get entrypoint';
+    const entrypoint = worker.getEntrypoint();
+
+    // load() creates a fresh Worker for each request; native RPC preserves body streams.
+    stage = 'invoke route';
+    return await entrypoint.handle(request, params);
+  } catch (error) {
+    // Keep platform error references and identify which isolation operation failed.
+    console.error({
+      source: 'greenwood-isolation',
+      route: pathname,
+      stage,
+      message: error.message,
+      stack: error.stack,
+    });
+    throw error;
+  }
 }
 
 `
