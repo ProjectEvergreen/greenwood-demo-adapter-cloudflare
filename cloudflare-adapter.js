@@ -1,17 +1,19 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { getDynamicPages } from '@greenwood/cli/src/lib/graph-utils.js';
+import fs from "node:fs/promises";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { getDynamicPages } from "@greenwood/cli/src/lib/graph-utils.js";
 
 function generateWorker(routes, basePath) {
-  const entries = routes.map(({ pathname, specifier, type }) => `  {
+  const entries = routes.map(
+    ({ pathname, specifier, type }) => `  {
     pattern: new URLPattern({ pathname: ${JSON.stringify(pathname)} }),
     load: () => import(${JSON.stringify(specifier)}),
     type: ${JSON.stringify(type)},
-  },`);
+  },`,
+  );
 
   return `const routes = [
-${entries.join('\n')}
+${entries.join("\n")}
 ];
 
 export default {
@@ -47,12 +49,12 @@ export default {
 }
 
 function compareRoutes(left, right) {
-  const leftSegments = left.route.split('/');
-  const rightSegments = right.route.split('/');
+  const leftSegments = left.route.split("/");
+  const rightSegments = right.route.split("/");
 
   for (let index = 0; index < Math.min(leftSegments.length, rightSegments.length); index++) {
-    const leftDynamic = leftSegments[index].startsWith('[');
-    const rightDynamic = rightSegments[index].startsWith('[');
+    const leftDynamic = leftSegments[index].startsWith("[");
+    const rightDynamic = rightSegments[index].startsWith("[");
 
     if (leftDynamic !== rightDynamic) {
       return leftDynamic ? 1 : -1;
@@ -64,13 +66,13 @@ function compareRoutes(left, right) {
 
 async function cloudflareAdapter(compilation) {
   const { outputDir, projectDirectory } = compilation.context;
-  const functionsDir = new URL('./functions/', projectDirectory);
+  const functionsDir = new URL("./functions/", projectDirectory);
   const pages = getDynamicPages(compilation);
   const apis = [...compilation.manifest.apis.values()];
   const outputFiles = await fs.readdir(outputDir);
   const routes = [];
   const serverFiles = new Set();
-  const basePath = compilation.config.basePath || '';
+  const basePath = compilation.config.basePath || "";
 
   // The functions directory contains generated output. Remove stale routes and chunks.
   await fs.rm(functionsDir, { recursive: true, force: true });
@@ -80,16 +82,18 @@ async function cloudflareAdapter(compilation) {
     const source = new URL(href);
     const relativePath = path.relative(fileURLToPath(sourceDir), fileURLToPath(source));
 
-    if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
-      throw new Error(`Cloudflare adapter asset is outside its route bundle directory: ${source.href}`);
+    if (relativePath.startsWith("..") || path.isAbsolute(relativePath)) {
+      throw new Error(
+        `Cloudflare adapter asset is outside its route bundle directory: ${source.href}`,
+      );
     }
 
-    const destination = new URL(relativePath.split(path.sep).join('/'), functionDir);
+    const destination = new URL(relativePath.split(path.sep).join("/"), functionDir);
 
-    await fs.mkdir(new URL('./', destination), { recursive: true });
+    await fs.mkdir(new URL("./", destination), { recursive: true });
     await fs.copyFile(source, destination);
     serverFiles.add(
-      path.relative(fileURLToPath(outputDir), fileURLToPath(source)).split(path.sep).join('/'),
+      path.relative(fileURLToPath(outputDir), fileURLToPath(source)).split(path.sep).join("/"),
     );
 
     return destination;
@@ -97,58 +101,63 @@ async function cloudflareAdapter(compilation) {
 
   async function copyFunction(entry, type) {
     const { id, outputHref, route, assets = [] } = entry;
-    const routePath = route.replace(/^\/+|\/+$/g, '');
-    const functionDir = new URL(`./${routePath ? `${routePath}/` : ''}`, functionsDir);
-    const sourceDir = new URL('./', outputHref);
-    const moduleUrl = await copyServerFile(outputHref, sourceDir, functionDir);
-    const chunks = type === 'page'
-      ? outputFiles
-        .filter(file => file.startsWith(`${id}.route.chunk`) && file.endsWith('.js'))
-        .map(file => new URL(file, outputDir).href)
-      : [];
+    const routePath = route.replace(/^\/+|\/+$/g, "");
+    const functionDir = new URL(`./${routePath ? `${routePath}/` : ""}`, functionsDir);
+    // API manifest outputHref can retain its source route path with a basePath.
+    // Greenwood emits API entry modules using their normalized route IDs.
+    const sourceHref = type === "api" ? new URL(`./api/${id}.js`, outputDir).href : outputHref;
+    const sourceDir = new URL("./", sourceHref);
+    const moduleUrl = await copyServerFile(sourceHref, sourceDir, functionDir);
+    const chunks =
+      type === "page"
+        ? outputFiles
+            .filter((file) => file.startsWith(`${id}.route.chunk`) && file.endsWith(".js"))
+            .map((file) => new URL(file, outputDir).href)
+        : [];
 
     // Preserve relative paths used by imports and WCC's new URL(..., import.meta.url).
     for (const asset of new Set([...assets, ...chunks])) {
       await copyServerFile(asset, sourceDir, functionDir);
     }
 
-    const relativeModulePath = path.relative(
-      fileURLToPath(functionsDir),
-      fileURLToPath(moduleUrl),
-    ).split(path.sep).join('/');
+    const relativeModulePath = path
+      .relative(fileURLToPath(functionsDir), fileURLToPath(moduleUrl))
+      .split(path.sep)
+      .join("/");
     const pathname = entry.segment ? `${basePath}${entry.segment.pathname}` : route;
 
     routes.push({
-      pathname: pathname.replace(/\/$/, '') || '/',
+      pathname: pathname.replace(/\/$/, "") || "/",
       specifier: `./${relativeModulePath}`,
       type,
     });
   }
 
-  // getDynamicPages excludes prerendered pages and routes expanded through getStaticPaths.
+  // getDynamicPages excludes static exports and routes expanded through getStaticPaths.
   const entries = [
-    ...pages.map(entry => ({ ...entry, type: 'page' })),
-    ...apis.map(entry => ({ ...entry, type: 'api' })),
+    ...pages.map((entry) => ({ ...entry, type: "page" })),
+    ...apis.map((entry) => ({ ...entry, type: "api" })),
   ].sort(compareRoutes);
 
   for (const entry of entries) {
     await copyFunction(entry, entry.type);
   }
 
-  await fs.writeFile(new URL('./worker.js', functionsDir), generateWorker(routes, basePath));
+  await fs.writeFile(new URL("./worker.js", functionsDir), generateWorker(routes, basePath));
 
   // Keep Greenwood's server bundles available for local serve, but exclude them from static hosting.
   await fs.appendFile(
-    new URL('./.assetsignore', outputDir),
-    `\n# Server modules are deployed separately from static assets.\n${[...serverFiles].map(file => `/${file}`).join('\n')}\n`,
+    new URL("./.assetsignore", outputDir),
+    `\n# Server modules are deployed separately from static assets.\n${[...serverFiles].map((file) => `/${file}`).join("\n")}\n`,
   );
 }
 
+/** @type {import('./types/index.d.ts').CloudflareAdapter} */
 const greenwoodPluginAdapterCloudflare = () => [
   {
-    type: 'adapter',
-    name: 'plugin-adapter-cloudflare',
-    provider: compilation => () => cloudflareAdapter(compilation),
+    type: "adapter",
+    name: "plugin-adapter-cloudflare",
+    provider: (compilation) => () => cloudflareAdapter(compilation),
   },
 ];
 
