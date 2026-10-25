@@ -5,4 +5,10 @@ export interface CloudflareAdapterPlugin extends Plugin {
   provider: (compilation: Compilation) => () => Promise<void>;
 }
 
-export declare function greenwoodPluginAdapterCloudflare(): CloudflareAdapterPlugin[];
+export interface CloudflareAdapterOptions {
+  /** Compatibility settings for isolated route Workers. Match wrangler.toml when overriding. */
+  compatibilityDate?: string;
+  compatibilityFlags?: string[];
+}
+
+export declare function greenwoodPluginAdapterCloudflare(options?: CloudflareAdapterOptions): CloudflareAdapterPlugin[];

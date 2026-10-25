@@ -1,0 +1,16 @@
+diff --git a/node_modules/@greenwood/plugin-renderer-lit/src/index.js b/node_modules/@greenwood/plugin-renderer-lit/src/index.js
+--- a/node_modules/@greenwood/plugin-renderer-lit/src/index.js
++++ b/node_modules/@greenwood/plugin-renderer-lit/src/index.js
+@@ -15,9 +15,11 @@
+ 
+     const matchingRoute = getMatchingPageByRoute(this.compilation, pathname);
+ 
++    // Static HTML pages can fetch SSR fragments after loading. They need the same
++    // hydration support as SSR pages, before any Lit component definitions load.
+     return (
+       matchingRoute &&
+-      ((matchingRoute.isSSR && matchingRoute.hydration) || this.compilation.config.prerender)
++      (!matchingRoute.isSSR || matchingRoute.hydration || this.compilation.config.prerender)
+     );
+   }
+ 

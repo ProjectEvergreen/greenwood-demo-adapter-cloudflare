@@ -1,27 +1,20 @@
-import '../../components/card.ts';
+import { html } from 'lit';
+import '../../components/card/card.ts';
 import { getProducts } from '../../services/products.ts';
 import type { Product } from '../../services/products.ts';
+import type { Compilation, Page } from '@greenwood/cli';
 
-export default class ProductDetailsPage extends HTMLElement {
-  #id: string;
+export async function getBody(
+  compilation: Compilation,
+  page: Page,
+  request: Request,
+  params: { id: string },
+) {
+  const { title, thumbnail } = await getProducts(params.id) as Product;
 
-  constructor({ params }: { params: { id: string } }) {
-    super();
-    this.#id = params.id;
-  }
-
-  async connectedCallback(): Promise<void> {
-    const product = await getProducts(this.#id) as Product;
-    const { title, thumbnail } = product;
-
-    this.innerHTML = `
-      <div class="products-cards-container">
-        <app-card
-          title="${title}"
-          thumbnail="${thumbnail}"
-        >
-        </app-card>
-      </div>
-    `;
-  }
+  return html`
+    <div class="products-cards-container">
+      <app-card title=${title} thumbnail=${thumbnail}></app-card>
+    </div>
+  `;
 }

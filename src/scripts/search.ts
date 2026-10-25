@@ -14,10 +14,8 @@ window.addEventListener('DOMContentLoaded', () => {
         'content-type': 'application/x-www-form-urlencoded'
       }
     }).then(response => response.text());
-    const fragment = Document.parseHTMLUnsafe(html);
-
-    if (searchOutput) {
-      searchOutput.innerHTML = fragment.body.innerHTML;
-    }
+    
+    // Parse the declarative shadow roots and Lit's hydration markers together.
+    searchOutput?.setHTMLUnsafe(html);
   });
 });

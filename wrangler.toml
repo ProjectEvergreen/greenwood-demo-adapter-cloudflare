@@ -21,5 +21,24 @@ fallthrough = true
 directory = "./public"
 binding = "ASSETS"
 
+# https://developers.cloudflare.com/dynamic-workers/getting-started/#configure-worker-loader
+# Requires Workers Paid; each isolated request creates a billable Dynamic Worker.
+# https://developers.cloudflare.com/dynamic-workers/pricing/
+# Keep this name and the Preview binding in sync with ISOLATION_BINDING in cloudflare-adapter.js.
+[[worker_loaders]]
+binding = "GREENWOOD_ISOLATION"
+
 # Required by wrangler preview for deploy previews
 [previews]
+
+# Worker Loader bindings are configured separately for Previews.
+[[previews.worker_loaders]]
+binding = "GREENWOOD_ISOLATION"
+
+[previews.observability]
+enabled = true
+
+[previews.observability.logs]
+enabled = true
+invocation_logs = true
+persist = true

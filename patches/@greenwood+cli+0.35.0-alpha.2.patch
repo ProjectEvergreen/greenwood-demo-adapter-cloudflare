@@ -1,0 +1,32 @@
+diff --git a/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-javascript.js b/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-javascript.js
+index aba20ef..8d5899d 100644
+--- a/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-javascript.js
++++ b/node_modules/@greenwood/cli/src/plugins/resource/plugin-standard-javascript.js
+@@ -83,6 +83,12 @@ class StandardJavaScriptResource {
+           edits.push({ start: node.source.end, end: closeBrace + 1, replacement: "" });
+         },
+         ImportExpression(node) {
++          // Expression specifiers are evaluated at runtime. Preserve both the
++          // expression and its import attributes instead of editing them as a string.
++          if (node.source.type !== "Literal" || typeof node.source.value !== "string") {
++            return;
++          }
++
+           if (node.options?.type !== "ObjectExpression") {
+             return;
+           }
+diff --git a/node_modules/@greenwood/cli/src/lib/ssr-route-worker-isolation-mode.js b/node_modules/@greenwood/cli/src/lib/ssr-route-worker-isolation-mode.js
+--- a/node_modules/@greenwood/cli/src/lib/ssr-route-worker-isolation-mode.js
++++ b/node_modules/@greenwood/cli/src/lib/ssr-route-worker-isolation-mode.js
+@@ -2,9 +2,9 @@
+ import { parentPort } from "node:worker_threads";
+ import { registerWorkerHandler } from "../runtimes/worker.js";
+ 
+-async function executeModule({ routeModuleUrl, request, compilation }) {
++async function executeModule({ routeModuleUrl, request, params }) {
+   const { handler } = await import(routeModuleUrl);
+-  const response = await handler(request, compilation);
++  const response = await handler(request, params ? JSON.parse(params) : params);
+   const html = await response.text();
+ 
+   parentPort.postMessage(html);
