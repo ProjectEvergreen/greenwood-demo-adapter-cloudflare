@@ -25,6 +25,7 @@
     "serve": "greenwood serve",
     "start": "npm run serve",
     "check": "tsc",
+    "test": "node --test test/cloudflare-adapter.test.js",
     "postinstall": "patch-package"
   },
   "dependencies": {

@@ -21,8 +21,17 @@ fallthrough = true
 directory = "./public"
 binding = "ASSETS"
 
+# https://developers.cloudflare.com/dynamic-workers/getting-started/#configure-worker-loader
+# Keep this name and the Preview binding in sync with ISOLATION_BINDING in cloudflare-adapter.js.
+[[worker_loaders]]
+binding = "GREENWOOD_ISOLATION"
+
 # Required by wrangler preview for deploy previews
 [previews]
+
+# Worker Loader bindings are configured separately for Previews.
+[[previews.worker_loaders]]
+binding = "GREENWOOD_ISOLATION"
 
 [previews.observability]
 enabled = true
